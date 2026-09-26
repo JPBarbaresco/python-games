@@ -34,22 +34,24 @@ class Car(pygame.sprite.Sprite):
         self.backward = controll_keys[2]
         self.left = controll_keys[3]
     
-    def update(self, pressed_keys, friction, delta):
-        old_angle = self.angle
-        old_speed = self.speed
+       def update(self, pressed_keys, friction, delta):
+        if len(pressed_keys) == 0:
+            control = False
+        else:
+            control = True
         
-        if pressed_keys[self.right] and round(self.speed, 0) != 0:
+        if control and pressed_keys[self.right] and round(self.speed, 0) != 0:
             self.angle -= CAR_TURN_SPEED*delta
             friction *= 1.125
-        elif pressed_keys[self.left] and round(self.speed, 0) != 0:
+        elif control and pressed_keys[self.left] and round(self.speed, 0) != 0:
             self.angle += CAR_TURN_SPEED*delta
             friction *= 1.125
 
         max_speed = CAR_POWER/friction if self.speed > 0 else (CAR_POWER/2)/friction
         
-        if pressed_keys[self.backward] and self.speed > -max_speed:
+        if control and pressed_keys[self.backward] and self.speed > -max_speed:
             self.speed -= CAR_ACCELERATION*delta
-        elif pressed_keys[self.forward] and self.speed < max_speed:
+        elif control and pressed_keys[self.forward] and self.speed < max_speed:
             self.speed += CAR_ACCELERATION*delta
         elif self.speed != 0:
             if self.speed > 0:
@@ -59,19 +61,17 @@ class Car(pygame.sprite.Sprite):
             if round(self.speed, 0) == 0:
                 self.speed = 0
 
-        # Only recalculate velocity when angle or speed changes
-        if self.angle != old_angle or self.speed != old_speed:
-            self.vx = self.speed * math.cos(math.radians(self.angle))
-            self.vy = self.speed * math.sin(math.radians(self.angle))
+        self.vx = self.speed * math.cos(math.radians(self.angle))
+        self.vy = self.speed * math.sin(math.radians(self.angle))
 
-            self.surf = pygame.transform.rotate(self.image, -self.angle)
-            
-            self.rect = self.surf.get_rect(center=(int(self.x), int(self.y)))
-            self.mask = pygame.mask.from_surface(self.surf)
+        self.surf = pygame.transform.rotate(self.image, -self.angle)
+        
+        self.rect = self.surf.get_rect(center=(int(self.x), int(self.y)))
+        self.mask = pygame.mask.from_surface(self.surf)
 
         # Move along trajectory using floating-point precision
-        self.x += self.vx
-        self.y += self.vy
+        self.x += self.vx*delta
+        self.y += self.vy*delta
         
         # Update rect to integer position for rendering
         self.rect.center = (int(self.x), int(self.y))
