@@ -6,7 +6,6 @@ from camera import Camera
 from timer import Timer
 from menu import Menu
 from button import *
-from ai import AIController
 
 from configurations import *
 
@@ -34,8 +33,6 @@ def play():
     global car_old_y
     global car2_old_x
     global car2_old_y
-    
-    # global ai
     
     global timer
     global timer2
@@ -80,12 +77,6 @@ def play():
         car2.update(pressed_keys, friction2, delta)
     else:
         car2.update([], 5*friction, delta)
-
-    # if timer2.lap_number <= lap_count:
-    #     ai_inputs = ai.get_inputs(car2)
-    #     car2.update(ai_inputs, friction2, delta)
-    # else:
-    #     car2.update([], 5*friction, delta)
 
     car_on_grass = grass_collision_mask.overlap(car.mask, (int(car.x - car.radius), int(car.y - car.radius)))
     car2_on_grass = grass_collision_mask.overlap(car2.mask, (int(car2.x - car2.radius), int(car2.y - car2.radius)))
@@ -185,8 +176,6 @@ def start_game(car1_color, car2_color):
     
     global timer
     global timer2
-
-    global ai
     
     global track
     
@@ -213,14 +202,9 @@ def start_game(car1_color, car2_color):
 
     car = Car(CAR_SIZE, car_start_position, car1_color, [K_a, K_w, K_s, K_d])
     car2 = Car(CAR_SIZE, car2_start_position, car2_color, [K_LEFT, K_UP, K_DOWN, K_RIGHT])
-    # car2 = Car(CAR_SIZE, car2_start_position, car2_color, [0,1,2,3])
-
+    
     car_old_x, car_old_y = car.x, car.y
     car2_old_x, car2_old_y = car2.x, car2.y
-
-    waypoints = [(640, 180), (1324, 170), (1874, 160), (2132, 152), (2236, 168), (2296, 226), (2226, 262), (2156, 294), (2222, 404), (2258, 532), (2278, 682), (2276, 762), (2198, 838), (2094, 872), (1984, 810), (1892, 690), (1780, 640), (1694, 638), (1668, 744), (1714, 852), (1836, 906), (2044, 950), (2272, 994), (2400, 1106), (2432, 1210), (2356, 1354), (2224, 1386), (2160, 1310), (2184, 1224), (2276, 1216), (2310, 1160), (2296, 1138), (2236, 1120), (2118, 1126), (2062, 1212), (1984, 1284), (1876, 1266), (1816, 1182), (1740, 1112), (1682, 1108), (1604, 1216), (1520, 1278), (1400, 1236), (1342, 1114), (1364, 1008), (1418, 874), (1466, 798), (1552, 654), (1632, 518), (1672, 438), (1616, 362), (1532, 360), (1422, 374), (1290, 398), (1160, 460), (1118, 556), (1108, 676), (1144, 852), (1212, 976), (1228, 1102), (1170, 1196), (1052, 1262), (896, 1278), (710, 1282), (588, 1282), (442, 1198), (312, 1074), (238, 910), (214, 796), (254, 748), (412, 708), (506, 710), (610, 822), (632, 940), (648, 1080), (754, 1148), (852, 1132), (862, 990), (904, 864), (872, 768), (798, 644), (690, 596), (542, 568), (430, 524), (272, 458), (190, 362), (164, 236), (330, 216), (598, 178)]
-
-    ai = AIController(waypoints)
 
     camera = Camera((SCREENX//2, SCREENY), (0, 0), car)
     camera2 = Camera((SCREENX//2, SCREENY), (0, 0), car2)
@@ -240,9 +224,6 @@ def start_game(car1_color, car2_color):
 
     pygame.draw.line(track, (255,255,255), (finish_line_x, finish_line_y0+45), (finish_line_x, finish_line_y1-20))
     pygame.draw.line(track, (255,255,255), (finish_line_x+2, finish_line_y0+45), (finish_line_x+2, finish_line_y1-20))
-
-    # for point in waypoints:
-    #     pygame.draw.circle(track, (255, 100, 0), point, 5)
 
     friction = TRACK_FRICTION
     friction2 = TRACK_FRICTION
